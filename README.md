@@ -14,8 +14,10 @@ npm install --save @nestjs/swagger express-basic-auth
 ```
 
 prisma
-
-passport
+```
+npm install prisma  --save-dev
+npm install @prisma/client
+```
 
 auth
 ```
