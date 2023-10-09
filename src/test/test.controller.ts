@@ -9,10 +9,15 @@ export class TestController {
   logger = new Logger(TestController.name);
   constructor(private readonly testService: TestService) {}
 
-  @Get()
-  testGet() {
+  @Get('/hi')
+  testHi() {
     this.logger.debug('hi');
     return 'hi';
+  }
+
+  @Get()
+  async testGetParent() {
+    return await this.testService.getTestParent();
   }
 
   @Post()

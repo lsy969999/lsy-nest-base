@@ -34,6 +34,11 @@ schedule
 npm install --save @nestjs/schedule
 ```
 
+cache
+```
+npm install @nestjs/cache-manager cache-manager
+```
+
 etc
 ```
 npm install class-transformer class-validator
