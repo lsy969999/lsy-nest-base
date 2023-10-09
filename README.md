@@ -42,4 +42,6 @@ npm install @nestjs/cache-manager cache-manager
 etc
 ```
 npm install class-transformer class-validator
+npm i --save @nestjs/throttler
+npm i --save helmet
 ```
