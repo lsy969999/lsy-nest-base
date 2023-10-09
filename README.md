@@ -13,3 +13,18 @@ swagger
 prisma
 
 passport
+
+auth
+```
+npm install bcrypt @types/bcrypt
+```
+
+health
+```
+npm install --save @nestjs/terminus
+```
+
+etc
+```
+npm install class-transformer class-validator
+```
