@@ -29,6 +29,11 @@ health
 npm install --save @nestjs/terminus
 ```
 
+schedule
+```
+npm install --save @nestjs/schedule
+```
+
 etc
 ```
 npm install class-transformer class-validator

@@ -1,8 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
+import { Cron, CronExpression } from '@nestjs/schedule';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class TestService {
+  private readonly logger = new Logger(TestService.name);
   constructor(private readonly prisma: PrismaService) {}
 
   async createTestParent(name: string) {
@@ -11,5 +13,10 @@ export class TestService {
         name,
       },
     });
+  }
+
+  @Cron(CronExpression.EVERY_HOUR)
+  cronTest() {
+    this.logger.debug('cronTest');
   }
 }
