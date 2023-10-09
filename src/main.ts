@@ -4,9 +4,11 @@ import { ConfigService } from '@nestjs/config';
 import { WinstonModule, utilities } from 'nest-winston';
 import * as winston from 'winston';
 import * as windstonDaily from 'winston-daily-rotate-file';
+import { Logger } from '@nestjs/common';
 
 async function bootstrap() {
   //Logger setting
+  //TODO: env loglevel
   const app = await NestFactory.create(AppModule, {
     logger: WinstonModule.createLogger({
       transports: [
@@ -21,6 +23,7 @@ async function bootstrap() {
           ),
         }),
         new windstonDaily({
+          level: 'debug',
           datePattern: 'YYYY-MM-DD',
           dirname: __dirname + '/../logs',
           filename: 'app.log.%DATE%',
@@ -43,6 +46,9 @@ async function bootstrap() {
   //port setting
   const configService = app.get(ConfigService);
   const port = configService.get('SERVER_PORT');
+  const env = configService.get('ENV');
   await app.listen(port);
+
+  Logger.log(`started, port: ${port}, env: ${env}`, 'MAIN');
 }
 bootstrap();
