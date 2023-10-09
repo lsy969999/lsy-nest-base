@@ -1,10 +1,11 @@
-import { Logger, Module } from '@nestjs/common';
+import { Logger, MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TestModule } from './test/test.module';
 import { HealthModule } from './health/health.module';
 import { PrismaModule } from './prisma/prisma.module';
 import databaseConfig from './config/database.config';
 import { CacheModule } from '@nestjs/cache-manager';
+import { LoggerMiddleWare } from './common/middleware/logger.middleware';
 
 @Module({
   imports: [
@@ -22,4 +23,8 @@ import { CacheModule } from '@nestjs/cache-manager';
   controllers: [],
   providers: [Logger],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(LoggerMiddleWare).forRoutes('*');
+  }
+}
