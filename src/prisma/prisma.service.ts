@@ -9,6 +9,8 @@ import {
 import { Prisma, PrismaClient } from '@prisma/client';
 
 @Injectable()
+//https://github.com/prisma/prisma/issues/11986
+//on query 하려면 제너릭 줘야함;
 export class PrismaService
   extends PrismaClient<
     Prisma.PrismaClientOptions,
