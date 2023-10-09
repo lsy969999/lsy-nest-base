@@ -4,7 +4,13 @@ import { ConfigService } from '@nestjs/config';
 import { WinstonModule, utilities } from 'nest-winston';
 import * as winston from 'winston';
 import * as windstonDaily from 'winston-daily-rotate-file';
-import { Logger } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
+import {
+  DocumentBuilder,
+  SwaggerCustomOptions,
+  SwaggerModule,
+} from '@nestjs/swagger';
+import * as basicAuth from 'express-basic-auth';
 
 async function bootstrap() {
   //Logger setting
@@ -40,13 +46,46 @@ async function bootstrap() {
     }),
   });
 
-  //api prefix setting
-  app.setGlobalPrefix('api');
-
-  //port setting
   const configService = app.get(ConfigService);
   const port = configService.get('SERVER_PORT');
   const env = configService.get('ENV');
+
+  if (env === 'prd') {
+    app.use(
+      ['/docs', '/docs-json'],
+      basicAuth({
+        challenge: true,
+        users: {
+          [configService.get('DOC_USER')]: configService.get('DOC_PASS'),
+        },
+      }),
+    );
+  }
+
+  const config = new DocumentBuilder()
+    .setTitle('base example')
+    .setDescription('The base API description')
+    .setVersion('1.0')
+    .addTag('base')
+    .addBearerAuth() //bearer
+    .build();
+  const customOptions: SwaggerCustomOptions = {
+    swaggerOptions: {
+      persistAuthorization: true, //bearer refresh persist
+    },
+  };
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('docs', app, document, customOptions);
+
+  //global ValidationPipe
+  app.useGlobalPipes(
+    new ValidationPipe({
+      //class-transformer 적용
+      transform: true,
+    }),
+  );
+
+  //port setting
   await app.listen(port);
 
   Logger.log(`started, port: ${port}, env: ${env}`, 'MAIN');

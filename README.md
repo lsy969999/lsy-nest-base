@@ -9,6 +9,9 @@ npm install winston nest-winston winston-daily-rotate-file
 ```
 
 swagger
+```
+npm install --save @nestjs/swagger express-basic-auth
+```
 
 prisma
 

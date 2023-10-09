@@ -1,6 +1,8 @@
 import { Controller, Get, Logger } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 
-@Controller('test')
+@Controller('api/test')
+@ApiTags('test')
 export class TestController {
   logger = new Logger(TestController.name);
 
