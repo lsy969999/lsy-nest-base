@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import { WinstonModule, utilities } from 'nest-winston';
 import * as winston from 'winston';
+import * as windstonDaily from 'winston-daily-rotate-file';
 
 async function bootstrap() {
   //Logger setting
@@ -16,6 +17,19 @@ async function bootstrap() {
             utilities.format.nestLike('Nest', {
               prettyPrint: true,
               colors: true,
+            }),
+          ),
+        }),
+        new windstonDaily({
+          datePattern: 'YYYY-MM-DD',
+          dirname: __dirname + '/../logs',
+          filename: 'app.log.%DATE%',
+          maxFiles: 30,
+          zippedArchive: true,
+          format: winston.format.combine(
+            winston.format.timestamp(),
+            utilities.format.nestLike('Nest', {
+              prettyPrint: true,
             }),
           ),
         }),

@@ -5,7 +5,7 @@ npm i --save @nestjs/config
 
 winston(logger)
 ```
-npm install winston nest-winston
+npm install winston nest-winston winston-daily-rotate-file
 ```
 
 swagger
