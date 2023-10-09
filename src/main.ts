@@ -11,6 +11,7 @@ import {
   SwaggerModule,
 } from '@nestjs/swagger';
 import * as basicAuth from 'express-basic-auth';
+import helmet from 'helmet';
 
 async function bootstrap() {
   //Logger setting
@@ -84,6 +85,9 @@ async function bootstrap() {
       transform: true,
     }),
   );
+
+  //helmet
+  app.use(helmet());
 
   //port setting
   await app.listen(port);
