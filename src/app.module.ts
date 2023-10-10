@@ -7,6 +7,7 @@ import databaseConfig from './config/database.config';
 import { CacheModule } from '@nestjs/cache-manager';
 import { LoggerMiddleWare } from './common/middleware/logger.middleware';
 import { ThrottlerModule } from '@nestjs/throttler';
+import { AuthModule } from './auth/auth.module';
 import jwtConfig from './config/jwt.config';
 
 @Module({
@@ -27,6 +28,7 @@ import jwtConfig from './config/jwt.config';
     TestModule,
     HealthModule,
     PrismaModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [Logger],
