@@ -2,6 +2,7 @@ version: '3.1'
 
 volumes:
   postgres_data:
+  reids_data:
 
 
 services:
@@ -24,6 +25,6 @@ services:
     ports:
       - "6379:6379"  # 로컬 포트와 컨테이너 포트 간의 포트 포워딩
     volumes:
-      - ./data:/data  # 데이터 볼륨 바인딩
+      - reids_data:/data  # 데이터 볼륨 바인딩
     command: redis-server --requirepass yourpassword  # Redis에 액세스하기 위한 비밀번호 설정
     restart: always  # 컨테이너 항상 다시 시작
