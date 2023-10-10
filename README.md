@@ -22,6 +22,7 @@ npm install @prisma/client
 auth
 ```
 npm install bcrypt @types/bcrypt
+npm install @nestjs/jwt @nestjs/passport passport passport-jwt passport-local
 ```
 
 health
