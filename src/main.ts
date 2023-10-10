@@ -29,20 +29,20 @@ async function bootstrap() {
             }),
           ),
         }),
-        new windstonDaily({
-          level: 'debug',
-          datePattern: 'YYYY-MM-DD',
-          dirname: __dirname + '/../logs',
-          filename: 'app.log.%DATE%',
-          maxFiles: 30,
-          zippedArchive: true,
-          format: winston.format.combine(
-            winston.format.timestamp(),
-            utilities.format.nestLike('Nest', {
-              prettyPrint: true,
-            }),
-          ),
-        }),
+        // new windstonDaily({
+        //   level: 'debug',
+        //   datePattern: 'YYYY-MM-DD',
+        //   dirname: __dirname + '/../logs',
+        //   filename: 'app.log.%DATE%',
+        //   maxFiles: 30,
+        //   zippedArchive: true,
+        //   format: winston.format.combine(
+        //     winston.format.timestamp(),
+        //     utilities.format.nestLike('Nest', {
+        //       prettyPrint: true,
+        //     }),
+        //   ),
+        // }),
       ],
     }),
   });
