@@ -11,6 +11,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { TestService } from './test.service';
 import { testParentCreateDto } from './dto/req.dto';
 import { ThrottlerBehindProxyGuard } from 'src/common/guard/throttler-behind-proxy.guard';
+import { SkipThrottle } from '@nestjs/throttler';
 
 @Controller('test')
 @ApiTags('test')
@@ -20,6 +21,7 @@ export class TestController {
   constructor(private readonly testService: TestService) {}
 
   @Get('view')
+  @SkipThrottle()
   @Render('index')
   view() {
     return { message: 'hi' };

@@ -8,5 +8,22 @@
     message: asdfasdf
     {{ message }}
     <img src="/test.PNG" />
+    <form action="/api/auth/signIn" method="post">
+      <label for="id">ID</label>
+      <input type="text" id="id">
+      <br/>
+      <label for="pw">PW</label>
+      <input type="text" id="pw">
+      <br/>
+      <button type="submit">login</button>  
+    </form>
+    <br/>
+    <button onclick="regist()">regist</button>
+
+    <script>
+      function regist(){
+        
+      }
+    </script>
   </body>
 </html>
