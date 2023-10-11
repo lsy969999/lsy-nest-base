@@ -1,7 +1,19 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail, Matches, MaxLength } from 'class-validator';
 
-export class SignInReqDto {
+export class GetUserOneReqDto {
+  userSn: number;
+}
+export class RegistReqDto {
+  @ApiProperty({ required: true, example: 'name' })
+  name: string;
+
+  @ApiProperty({ required: true, example: 'nickName' })
+  nickName: string;
+
+  @ApiProperty()
+  imageUrl: string;
+
   @ApiProperty({ required: true, example: 'lsy@naver.com' })
   @IsEmail()
   @MaxLength(30)
@@ -12,4 +24,4 @@ export class SignInReqDto {
   password: string;
 }
 
-export class SignOutReqDto {}
+export class WithdrawReqDto {}

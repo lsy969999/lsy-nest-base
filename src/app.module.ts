@@ -8,6 +8,10 @@ import { CacheModule } from '@nestjs/cache-manager';
 import { LoggerMiddleWare } from './common/middleware/logger.middleware';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { AuthModule } from './auth/auth.module';
+import { UserController } from './user/user.controller';
+import { UserService } from './user/user.service';
+import { UserModule } from './user/user.module';
+import { AccountModule } from './account/account.module';
 import jwtConfig from './config/jwt.config';
 
 @Module({
@@ -29,9 +33,11 @@ import jwtConfig from './config/jwt.config';
     HealthModule,
     PrismaModule,
     AuthModule,
+    UserModule,
+    AccountModule,
   ],
-  controllers: [],
-  providers: [Logger],
+  controllers: [UserController],
+  providers: [Logger, UserService],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

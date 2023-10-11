@@ -51,6 +51,11 @@ enum AccountStatus {
   WITHDRAW
 }
 
+enum UserRole {
+  ADMIN
+  USER
+}
+
 model Account {
   accountSn Int @id @default(autoincrement())
   email String
@@ -73,6 +78,7 @@ model User {
   name String
   nickName String
   imageUrl String?
+  role UserRole @default(USER)
 
   isDeleted Boolean @default(false)
   createdAt DateTime @default(now())  
