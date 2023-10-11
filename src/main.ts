@@ -12,11 +12,13 @@ import {
 } from '@nestjs/swagger';
 import * as basicAuth from 'express-basic-auth';
 import helmet from 'helmet';
+import { NestExpressApplication } from '@nestjs/platform-express';
+import { join } from 'path';
 
 async function bootstrap() {
   //Logger setting
   //TODO: env loglevel
-  const app = await NestFactory.create(AppModule, {
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     logger: WinstonModule.createLogger({
       transports: [
         new winston.transports.Console({
@@ -88,6 +90,11 @@ async function bootstrap() {
 
   //helmet
   app.use(helmet());
+
+  //hbs view
+  app.useStaticAssets(join(__dirname, '..', 'public'));
+  app.setBaseViewsDir(join(__dirname, '..', 'views'));
+  app.setViewEngine('hbs');
 
   //port setting
   await app.listen(port);

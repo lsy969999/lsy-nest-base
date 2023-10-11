@@ -40,6 +40,11 @@ cache
 npm install @nestjs/cache-manager cache-manager
 ```
 
+mvc
+```
+npm install --save hbs
+```
+
 etc
 ```
 npm install class-transformer class-validator
