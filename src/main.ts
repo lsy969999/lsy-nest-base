@@ -3,7 +3,7 @@ import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import { WinstonModule, utilities } from 'nest-winston';
 import * as winston from 'winston';
-import * as windstonDaily from 'winston-daily-rotate-file';
+// import * as windstonDaily from 'winston-daily-rotate-file';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import {
   DocumentBuilder,

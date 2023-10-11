@@ -5,26 +5,24 @@ import { AuthService } from './auth.service';
 @Controller('api/auth')
 @ApiTags('Auth')
 export class AuthController {
-  constructor(
-    private readonly authService: AuthService,
-  ){}
+  constructor(private readonly authService: AuthService) {}
   @Post('signIn')
-  signIn(){
+  signIn() {
     return this.authService.signIn();
   }
 
   @Post('signOut')
-  signOut(){
+  signOut() {
     return this.authService.signOut();
   }
 
   @Post('regist')
-  signUp(){
+  signUp() {
     return this.authService.regist();
   }
 
   @Post('withdrawal')
-  withdrawal(){
+  withdrawal() {
     return this.authService.withdrawal();
   }
 }

@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Logger, Post, UseGuards, Render } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Logger,
+  Post,
+  UseGuards,
+  Render,
+} from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { TestService } from './test.service';
 import { testParentCreateDto } from './dto/req.dto';
@@ -13,8 +21,8 @@ export class TestController {
 
   @Get('view')
   @Render('index')
-  view(){
-    return {message: 'hi'}
+  view() {
+    return { message: 'hi' };
   }
 
   @Get('/hi')
