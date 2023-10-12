@@ -9,3 +9,7 @@ export class SignInResDto {
 }
 
 export class SignOutResDto {}
+
+export class RegistResDto {}
+
+export class WithDrawResDto {}

@@ -6,25 +6,71 @@
   <title>Document</title>
 </head>
 <body>
-    message: asdfasdf
-    {{ message }}
-    <img src="/test.PNG" />
-    <form action="/api/auth/signIn" method="post">
-      <label for="id">ID</label>
-      <input type="text" id="id">
-      <br/>
-      <label for="pw">PW</label>
-      <input type="text" id="pw">
-      <br/>
-      <button type="submit">login</button>  
-    </form>
-    <br/>
-    <button onclick="regist()">regist</button>
+    <div>
+      <h2>SignIn</h2>
+      <form action="/api/auth/signIn" method="post">
+        <label for="signin_email">email</label>
+        <input type="text" id="signin_email">
+        <br/>
+        <label for="signin_password">password</label>
+        <input type="text" id="signin_password">
+        <br/>
+        <button type="submit">signIn</button>  
+      </form>
+    </div>
+<hr>
+    <div>
+      <h2>SignOut</h2>
+      <button>withdraw</button>
+    </div>
 
-    <script >
+    <hr>
+    <div>
+      <h2>regist</h2>
+      <form>
+        <label for="regist_name">name</label>
+        <input type="text" id="regist_name">
+<br/>
+        <label for="regist_nickName">nickName</label>
+        <input type="text" id="regist_nickName">
+<br/>
+        <label for="regist_email">email</label>
+        <input type="text" id="regist_email">
+<br/>
+        <label for="regist_password">password</label>
+        <input type="text" id="regist_password">
+<br/>
+        <button onclick="regist()">regist</button>
+      </form>
+    </div>
+  <hr>
+    <div>
+      <h2>withdraw</h2>
+      <button id="withdraw">withdraw</button>
+    </div>
+    <img src="/test.PNG" />
+
+    <script>
+      function signIn(){
+
+      }
+
+      function signOut(){
+
+      }
+
       function regist(){
         
       }
+
+      function withdraw(){
+        fetch('/api/auth/withdraw', {method: 'POST'})
+          .then(r=>r.json())
+          .then(console.log)
+          .catch(console.error)
+      }
+      
+      document.getElementById('withdraw').addEventListener('click', withdraw)
     </script>
   </body>
 </html>

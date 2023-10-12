@@ -41,8 +41,8 @@ export class AuthController {
   }
 
   //탈퇴
-  @Post('withdrawal')
+  @Post('withdraw')
   withdrawal() {
-    return;
+    return { json: 'hi' };
   }
 }
