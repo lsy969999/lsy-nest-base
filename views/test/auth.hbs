@@ -66,7 +66,8 @@
         const nickName = document.getElementById('regist_nickName').value
         const email = document.getElementById('regist_email').value
         const password = document.getElementById('regist_password').value
-        const body = JSON.stringify({name, nickName, email, password})
+        const provider = 'EMAIL'
+        const body = JSON.stringify({name, nickName, email, password, provider})
         
         fetch('/api/auth/regist', {method: 'POST', body, headers})
           .then(r=>r.json())

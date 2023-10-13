@@ -27,13 +27,13 @@ export class RegistReqDto {
 
   @ApiProperty()
   @IsIn([...Object.values(AccountProvider)])
-  provider: AccountProvider
+  provider: AccountProvider;
 
   @ApiProperty()
-  providerId: string
+  providerId: string;
 
   @ApiProperty({ required: true, example: 'lsy@naver.com' })
-  @IsEmail({}, {message: '이메일 형식이 아닙니다.'})
+  @IsEmail({}, { message: '이메일 형식이 아닙니다.' })
   @MaxLength(30)
   email: string;
 

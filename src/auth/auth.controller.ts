@@ -1,8 +1,13 @@
 import { Body, Controller, Logger, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import AuthService from './auth.service';
-import { RegistReqDto, SignInReqDto, SignOutReqDto, WithDrawReqDto } from './dto/req.dto';
-import { RegistResDto, SignInResDto } from './dto/res.dto';
+import {
+  RegistReqDto,
+  SignInReqDto,
+  SignOutReqDto,
+  WithDrawReqDto,
+} from './dto/req.dto';
+import { SignInResDto } from './dto/res.dto';
 /*
 사용자 인증에관한 진입점
 인증은 jwt를 사용하며,
@@ -32,19 +37,39 @@ export class AuthController {
   //이메일 로그아웃
   @Post('signOut')
   signOut(@Body() data: SignOutReqDto) {
+    this.logger.debug(data);
     return this.authService.signOut();
   }
 
   //가입
   @Post('regist')
-  async signUp(@Body() {email, password, imageUrl, name, nickName, provider, providerId}: RegistReqDto) {
-    const result = await this.authService.regist(email, password, provider, providerId, name, nickName, imageUrl)
+  async signUp(
+    @Body()
+    {
+      email,
+      password,
+      imageUrl,
+      name,
+      nickName,
+      provider,
+      providerId,
+    }: RegistReqDto,
+  ) {
+    const result = await this.authService.regist(
+      email,
+      password,
+      provider,
+      providerId,
+      name,
+      nickName,
+      imageUrl,
+    );
     return result;
   }
 
   //탈퇴
   @Post('withdraw')
   withdrawal(@Body() data: WithDrawReqDto) {
-    return { json: 'hi' };
+    return { json: 'hi', ...data };
   }
 }

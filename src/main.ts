@@ -103,7 +103,7 @@ async function bootstrap() {
         '*.googleapis.com',
         "'unsafe-inline'",
         "'unsafe-eval'",
-        "https://cdn.socket.io",
+        'https://cdn.socket.io',
       ],
       // 다음과 카카오에서 이미지 소스를 허용
       'img-src': ["'self'", 'data:', '*.daumcdn.net', '*.kakaocdn.net'],

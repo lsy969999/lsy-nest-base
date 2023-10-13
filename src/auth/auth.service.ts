@@ -1,11 +1,23 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService, JwtSignOptions } from '@nestjs/jwt';
 import { AccountProvider, AccountStatus, UserRole } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
+type RegistReuslt = {
+  userSn: number;
+  accessToken: string;
+  refreshToken: string;
+  nickName: string;
+};
 
 @Injectable()
 export default class AuthService {
+  private readonly logger = new Logger(AuthService.name);
   constructor(
     private readonly prisma: PrismaService,
     private readonly jwtService: JwtService,
@@ -46,24 +58,42 @@ export default class AuthService {
     name: string,
     nickName: string,
     imageUrl: string,
-  ): Promise< {userSn: number, accessToken: string, refreshToken: string, nickName: string}>{
-    const user = await this.prisma.user.create({data:{name, nickName, imageUrl, role: UserRole.USER, }})
-    const account = await this.prisma.account.create({data:{email, password, accountStatus: AccountStatus.NORMAL, userSn: user.userSn, provider, providerId, }})
-    const accessToken = await this.genAccessToken(
-      user.userSn,
-      user.role,
-    );
-    const refreshToken = await this.genRefreshToken(
-      user.userSn,
-      user.role,
-    );
-    this.prisma.accountRefreshToken.create({data:{token: refreshToken, accountSn: account.accountSn }})
-    return {
-      userSn: user.userSn,
-      accessToken,
-      refreshToken,
-      nickName: user.nickName,
-    }
+  ): Promise<RegistReuslt> {
+    const result = await this.prisma.$transaction(async (tx) => {
+      const accountCount = await tx.account.count({
+        where: { AND: [{ email }, { provider }] },
+      });
+      if (accountCount) {
+        throw new InternalServerErrorException();
+      }
+
+      const user = await tx.user.create({
+        data: { name, nickName, imageUrl, role: UserRole.USER },
+      });
+      const account = await tx.account.create({
+        data: {
+          email,
+          password,
+          accountStatus: AccountStatus.NORMAL,
+          userSn: user.userSn,
+          provider,
+          providerId,
+        },
+      });
+      const accessToken = await this.genAccessToken(user.userSn, user.role);
+      const refreshToken = await this.genRefreshToken(user.userSn, user.role);
+      await tx.accountRefreshToken.create({
+        data: { token: refreshToken, accountSn: account.accountSn },
+      });
+      return {
+        userSn: user.userSn,
+        accessToken,
+        refreshToken,
+        nickName: user.nickName,
+      };
+    });
+
+    return result;
   }
 
   withdraw() {}
