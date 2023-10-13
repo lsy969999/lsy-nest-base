@@ -13,6 +13,7 @@ import { UserService } from './user/user.service';
 import { UserModule } from './user/user.module';
 import { AccountModule } from './account/account.module';
 import { WsGateWayModule } from './ws-gate-way/ws-gate-way.module';
+import { SseModule } from './sse/sse.module';
 import jwtConfig from './config/jwt.config';
 
 @Module({
@@ -37,6 +38,7 @@ import jwtConfig from './config/jwt.config';
     UserModule,
     AccountModule,
     WsGateWayModule,
+    SseModule,
   ],
   controllers: [UserController],
   providers: [Logger, UserService],
