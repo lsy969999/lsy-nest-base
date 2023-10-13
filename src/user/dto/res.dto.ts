@@ -6,15 +6,15 @@ export class GetUserOneResDto {
   userSn: number;
 }
 
-export class RegistResDto {
-  @ApiProperty({ required: true })
-  userSn: number;
+// export class RegistResDto {
+//   @ApiProperty({ required: true })
+//   userSn: number;
 
-  @ApiProperty({ required: true })
-  accessToken: string;
+//   @ApiProperty({ required: true })
+//   accessToken: string;
 
-  @ApiProperty({ required: true })
-  refreshToken: string;
-}
+//   @ApiProperty({ required: true })
+//   refreshToken: string;
+// }
 
-export class WithdrawResDto {}
+// export class WithdrawResDto {}

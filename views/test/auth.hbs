@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+    <div>
+      <h2>SignIn</h2>
+      <form>
+        <label for="signin_email">email</label>
+        <input type="text" id="signin_email">
+        <br/>
+        <label for="signin_password">password</label>
+        <input type="text" id="signin_password">
+        <br/>
+        <button id="signIn">signIn</button>  
+      </form>
+    </div>
+<hr>
+    <div>
+      <h2>SignOut</h2>
+      <button id="signOut">signOut</button>
+    </div>
+
+    <hr>
+    <div>
+      <h2>Regist</h2>
+      <form>
+        <label for="regist_name">name</label>
+        <input type="text" id="regist_name">
+<br/>
+        <label for="regist_nickName">nickName</label>
+        <input type="text" id="regist_nickName">
+<br/>
+        <label for="regist_email">email</label>
+        <input type="text" id="regist_email">
+<br/>
+        <label for="regist_password">password</label>
+        <input type="text" id="regist_password">
+<br/>
+        <button id="regist">regist</button>
+      </form>
+    </div>
+  <hr>
+    <div>
+      <h2>Withdraw</h2>
+      <button id="withdraw">withdraw</button>
+    </div>
+    <img src="/test.PNG" />
+
+    <script>
+      const headers = {"Content-Type": "application/json"}
+      function signIn(event){
+        event.preventDefault()
+      }
+
+      function signOut(event){
+        event.preventDefault()
+      }
+
+      function regist(event){
+        event.preventDefault()
+        const name = document.getElementById('regist_name').value
+        const nickName = document.getElementById('regist_nickName').value
+        const email = document.getElementById('regist_email').value
+        const password = document.getElementById('regist_password').value
+        const body = JSON.stringify({name, nickName, email, password})
+        
+        fetch('/api/auth/regist', {method: 'POST', body, headers})
+          .then(r=>r.json())
+          .then(console.log)
+          .catch(console.error)
+      }
+
+      function withdraw(event){
+        event.preventDefault()
+        fetch('/api/auth/withdraw', {method: 'POST', headers})
+          .then(r=>r.json())
+          .then(console.log)
+          .catch(console.error)
+      }
+      
+      document.getElementById('withdraw').addEventListener('click', withdraw)
+      document.getElementById('regist').addEventListener('click', regist)
+      document.getElementById('signOut').addEventListener('click', signOut)
+      document.getElementById('signIn').addEventListener('click', signIn)
+    </script>
+  </body>
+</html>

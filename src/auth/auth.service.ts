@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService, JwtSignOptions } from '@nestjs/jwt';
-import { UserRole } from '@prisma/client';
+import { AccountProvider, AccountStatus, UserRole } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
@@ -36,17 +36,35 @@ export default class AuthService {
   }
 
   /**
-   * 이메일 중복체크 프로바이더와 함께
+   * TODO: Trx, DupCheck
    */
-  // regist(
-  //   email: string,
-  //   password: string,
-  //   provider: Provider,
-  //   providerId: string,
-  //   name: string,
-  //   nickName: string,
-  //   imgUrl: string,
-  // ){}
+  async regist(
+    email: string,
+    password: string,
+    provider: AccountProvider,
+    providerId: string,
+    name: string,
+    nickName: string,
+    imageUrl: string,
+  ): Promise< {userSn: number, accessToken: string, refreshToken: string, nickName: string}>{
+    const user = await this.prisma.user.create({data:{name, nickName, imageUrl, role: UserRole.USER, }})
+    const account = await this.prisma.account.create({data:{email, password, accountStatus: AccountStatus.NORMAL, userSn: user.userSn, provider, providerId, }})
+    const accessToken = await this.genAccessToken(
+      user.userSn,
+      user.role,
+    );
+    const refreshToken = await this.genRefreshToken(
+      user.userSn,
+      user.role,
+    );
+    this.prisma.accountRefreshToken.create({data:{token: refreshToken, accountSn: account.accountSn }})
+    return {
+      userSn: user.userSn,
+      accessToken,
+      refreshToken,
+      nickName: user.nickName,
+    }
+  }
 
   withdraw() {}
 

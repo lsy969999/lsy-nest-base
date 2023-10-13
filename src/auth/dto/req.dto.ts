@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, Matches, MaxLength } from 'class-validator';
+import { AccountProvider } from '@prisma/client';
+import { IsEmail, IsIn, Matches, MaxLength } from 'class-validator';
 
 export class SignInReqDto {
   @ApiProperty({ required: true, example: 'lsy@naver.com' })
@@ -24,8 +25,15 @@ export class RegistReqDto {
   @ApiProperty()
   imageUrl: string;
 
+  @ApiProperty()
+  @IsIn([...Object.values(AccountProvider)])
+  provider: AccountProvider
+
+  @ApiProperty()
+  providerId: string
+
   @ApiProperty({ required: true, example: 'lsy@naver.com' })
-  @IsEmail()
+  @IsEmail({}, {message: '이메일 형식이 아닙니다.'})
   @MaxLength(30)
   email: string;
 

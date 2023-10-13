@@ -20,9 +20,9 @@ export class TestController {
   logger = new Logger(TestController.name);
   constructor(private readonly testService: TestService) {}
 
-  @Get('view')
+  @Get('auth')
   @SkipThrottle()
-  @Render('index')
+  @Render('test/auth')
   view() {
     return { message: 'hi' };
   }

@@ -5,4 +5,4 @@ export class GetUserOneReqDto {
   userSn: number;
 }
 
-export class WithdrawReqDto {}
+// export class WithdrawReqDto {}
