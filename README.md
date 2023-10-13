@@ -45,6 +45,12 @@ mvc
 npm install --save hbs
 ```
 
+ws
+```
+npm i --save @nestjs/websockets @nestjs/platform-socket.io
+npm i --save @types/socket.io
+```
+
 etc
 ```
 npm install class-transformer class-validator

@@ -20,6 +20,13 @@ export class TestController {
   logger = new Logger(TestController.name);
   constructor(private readonly testService: TestService) {}
 
+  @Get('ws')
+  @SkipThrottle()
+  @Render('test/ws')
+  wsView(){
+    return {};
+  }
+
   @Get('auth')
   @SkipThrottle()
   @Render('test/auth')
