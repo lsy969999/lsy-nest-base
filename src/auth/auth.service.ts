@@ -51,6 +51,7 @@ export default class AuthService {
   /**
    * 회원가입
    * - (*1) 이메일과 프로바이더 유효성 체크
+   * -      (*1-1) 중복시 Exception
    * - (*2) user 생성
    * - (*3) 계정 생성
    * - (*4) access, refresh 토큰 생성
@@ -72,6 +73,7 @@ export default class AuthService {
       const accountCount = await tx.account.count({
         where: { AND: [{ email }, { provider }] },
       });
+      //(*1-1)
       if (accountCount) {
         throw new InternalServerErrorException();
       }
@@ -90,6 +92,7 @@ export default class AuthService {
           providerId,
         },
       });
+
       //(*3)
       const accessToken = await this.genAccessToken(user.userSn, user.role);
       const refreshToken = await this.genRefreshToken(user.userSn, user.role);
