@@ -56,4 +56,6 @@ etc
 npm install class-transformer class-validator
 npm i --save @nestjs/throttler
 npm i --save helmet
+npm install uuid
+npm install --save @types/uuid
 ```
