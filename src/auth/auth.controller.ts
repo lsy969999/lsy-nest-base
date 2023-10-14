@@ -1,4 +1,4 @@
-import { Body, Controller, Logger, Post } from '@nestjs/common';
+import { Body, Controller, Logger, Post, Res } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import AuthService from './auth.service';
 import {
@@ -9,6 +9,8 @@ import {
   WithDrawReqDto,
 } from './dto/req.dto';
 import { RegistResDto, SignInResDto } from './dto/res.dto';
+import { Response } from 'express';
+import { ConfigService } from '@nestjs/config';
 /*
 사용자 인증에관한 진입점
 인증은 jwt를 사용하며,
@@ -27,17 +29,32 @@ jwt 스펙은 아래와 같다.
 @ApiTags('Auth')
 export class AuthController {
   private readonly logger = new Logger(AuthController.name);
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly configService: ConfigService,
+  ) {}
 
   //이메일 로그인
   @Post('signIn')
-  async signIn(@Body() data: SignInReqDto): Promise<SignInResDto> {
-    return this.authService.signIn(data.email, data.password);
+  async signIn(
+    @Body() data: SignInReqDto,
+    @Res({ passthrough: true }) response: Response,
+  ): Promise<SignInResDto> {
+    const res = await this.authService.signIn(data.email, data.password);
+    this.authService.setAccessCookieToClient(response, res.accessToken);
+    return {
+      nickName: res.nickName,
+      userSn: res.userSn,
+    };
   }
 
   //이메일 로그아웃
   @Post('signOut')
-  signOut(@Body() data: SignOutReqDto) {
+  signOut(
+    @Body() data: SignOutReqDto,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    response.clearCookie('at');
     this.logger.debug(data);
     return this.authService.signOut();
   }
@@ -55,6 +72,7 @@ export class AuthController {
       provider,
       providerId,
     }: RegistReqDto,
+    @Res({ passthrough: true }) response: Response,
   ): Promise<RegistResDto> {
     const result = await this.authService.regist(
       email,
@@ -65,8 +83,8 @@ export class AuthController {
       nickName,
       imageUrl,
     );
+    this.authService.setAccessCookieToClient(response, result.accessToken);
     return {
-      accessToken: result.accessToken,
       nickName: result.nickName,
       userSn: result.userSn,
     };
@@ -74,7 +92,11 @@ export class AuthController {
 
   //탈퇴 TODO
   @Post('withdraw')
-  withdrawal(@Body() data: WithDrawReqDto) {
+  withdrawal(
+    @Body() data: WithDrawReqDto,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    response.clearCookie('at');
     return { json: 'hi', ...data };
   }
 

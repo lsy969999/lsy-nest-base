@@ -1,5 +1,5 @@
 import { Logger, MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TestModule } from './test/test.module';
 import { HealthModule } from './health/health.module';
 import { PrismaModule } from './prisma/prisma.module';
@@ -15,6 +15,7 @@ import { AccountModule } from './account/account.module';
 import { WsGateWayModule } from './ws-gate-way/ws-gate-way.module';
 import { SseModule } from './sse/sse.module';
 import jwtConfig from './config/jwt.config';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -31,6 +32,17 @@ import jwtConfig from './config/jwt.config';
         limit: 10,
       },
     ]),
+    JwtModule.registerAsync({
+      global: true,
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => {
+        const obj = {
+          global: true,
+          secret: configService.get('jwt.secret'),
+        };
+        return obj;
+      },
+    }),
     TestModule,
     HealthModule,
     PrismaModule,

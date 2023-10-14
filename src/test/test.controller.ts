@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   Body,
   Controller,
@@ -14,6 +15,10 @@ import { testParentCreateDto } from './dto/req.dto';
 import { ThrottlerBehindProxyGuard } from 'src/common/guard/throttler-behind-proxy.guard';
 import { SkipThrottle } from '@nestjs/throttler';
 import { Request } from 'express';
+import { JwtAuthGuard } from 'src/common/guard/jwt-auth.guard';
+import { Public } from 'src/common/decorator/public.decorator';
+import { Roles } from 'src/common/decorator/role.decorator';
+import { UserRole } from '@prisma/client';
 
 @Controller('test')
 @ApiTags('test')
@@ -51,9 +56,17 @@ export class TestController {
 
   @Get()
   async testGetParent(@Req() request: Request) {
-    console.log(request);
+    // console.log(request);
     console.log(request.cookies);
     return await this.testService.getTestParent();
+  }
+
+  @Get('t')
+  @UseGuards(JwtAuthGuard)
+  // @Public()
+  // @Roles(UserRole.ADMIN)
+  test() {
+    return 'hi';
   }
 
   @Post()

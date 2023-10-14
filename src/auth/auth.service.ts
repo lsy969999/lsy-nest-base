@@ -6,11 +6,19 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService, JwtSignOptions } from '@nestjs/jwt';
-import { AccountProvider, AccountStatus, UserRole } from '@prisma/client';
+import {
+  Account,
+  AccountProvider,
+  AccountStatus,
+  AccountToken,
+  Prisma,
+  UserRole,
+} from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { RegistReuslt } from './types/service.types';
 import { v4 as uuidv4 } from 'uuid';
 import * as bcrypt from 'bcrypt';
+import { Response } from 'express';
 
 const bcryptSaltRounds = 10;
 
@@ -32,7 +40,9 @@ export default class AuthService {
   async signIn(email: string, password: string) {
     const account = await this.prisma.account.findFirst({
       where: { email, provider: AccountProvider.EMAIL, isDeleted: false },
-      select: { user: true, password: true, accountSn: true },
+      include: {
+        user: true,
+      },
     });
 
     if (!account) {
@@ -42,41 +52,13 @@ export default class AuthService {
       throw new NotFoundException();
     }
 
-    const accessTokenJti = this.genJti();
-    const refreshTokenJti = this.genJti();
+    const accountToken = await this.accessTokenRolling(this.prisma, account);
 
-    const accessTokenExpires = 24 * 60 * 60 * 1000;
-    const refershTokenExpires = 30 * 24 * 60 * 60 * 1000;
-
-    //(*3)
-    const accessToken = await this.genJwtToken(
-      account.user.userSn,
-      account.user.role,
-      accessTokenJti,
-      accessTokenExpires,
-    );
-    const refreshToken = await this.genJwtToken(
-      account.user.userSn,
-      account.user.role,
-      refreshTokenJti,
-      refershTokenExpires,
-    );
-
-    const nowTimeNum = Date.now();
-
-    //(*4)
-    await this.prisma.accountToken.create({
-      data: {
-        accountSn: account.accountSn,
-        accessExpires: new Date(nowTimeNum + accessTokenExpires),
-        refreshExpires: new Date(nowTimeNum + refershTokenExpires),
-        accessJti: accessTokenJti,
-        refreshJti: refreshTokenJti,
-        accessToken: accessToken,
-        refreshToken: refreshToken,
-      },
-    });
-    return { accessToken };
+    return {
+      accessToken: accountToken.accessToken,
+      userSn: account.user.userSn,
+      nickName: account.user.nickName,
+    };
   }
 
   /**
@@ -133,45 +115,12 @@ export default class AuthService {
         },
       });
 
-      const accessTokenJti = this.genJti();
-      const refreshTokenJti = this.genJti();
-
-      const accessTokenExpires = 24 * 60 * 60 * 1000;
-      const refershTokenExpires = 30 * 24 * 60 * 60 * 1000;
-
-      //(*3)
-      const accessToken = await this.genJwtToken(
-        user.userSn,
-        user.role,
-        accessTokenJti,
-        accessTokenExpires,
-      );
-      const refreshToken = await this.genJwtToken(
-        user.userSn,
-        user.role,
-        refreshTokenJti,
-        refershTokenExpires,
-      );
-
-      const nowTimeNum = Date.now();
-
-      //(*4)
-      await tx.accountToken.create({
-        data: {
-          accountSn: account.accountSn,
-          accessExpires: new Date(nowTimeNum + accessTokenExpires),
-          refreshExpires: new Date(nowTimeNum + refershTokenExpires),
-          accessJti: accessTokenJti,
-          refreshJti: refreshTokenJti,
-          accessToken: accessToken,
-          refreshToken: refreshToken,
-        },
-      });
+      const accountToken = await this.accessTokenRolling(tx, account);
 
       return {
         userSn: user.userSn,
-        accessToken,
-        refreshToken,
+        accessToken: accountToken.accessToken,
+        refreshToken: accountToken.refreshToken,
         nickName: user.nickName,
       };
     });
@@ -190,8 +139,7 @@ export default class AuthService {
         where: { accessToken, isDeleted: false },
         include: {
           account: {
-            select: {
-              accountSn: true,
+            include: {
               user: true,
             },
           },
@@ -209,53 +157,76 @@ export default class AuthService {
         data: { isDeleted: true },
       });
 
-      const newAccessTokenJti = this.genJti();
-      const newRefreshTokenJti = this.genJti();
-
-      const newAccessTokenExpires = 24 * 60 * 60 * 1000;
-      const newRershTokenExpires = 30 * 24 * 60 * 60 * 1000;
-
-      const newAccessToken = await this.genJwtToken(
-        at.account.user.userSn,
-        at.account.user.role,
-        newAccessTokenJti,
-        newAccessTokenExpires,
-      );
-      const newRefreshToken = await this.genJwtToken(
-        at.account.user.userSn,
-        at.account.user.role,
-        newRefreshTokenJti,
-        newRershTokenExpires,
-      );
-
-      const nowTimeNum = Date.now();
-
-      await tx.accountToken.create({
-        data: {
-          accountSn: at.account.accountSn,
-          accessExpires: new Date(nowTimeNum + newAccessTokenExpires),
-          refreshExpires: new Date(nowTimeNum + newRershTokenExpires),
-          accessJti: newAccessTokenJti,
-          refreshJti: newRefreshTokenJti,
-          accessToken: newAccessToken,
-          refreshToken: newRefreshToken,
-        },
-      });
-      return { accessToken: newAccessToken };
+      const newAccountToken = await this.accessTokenRolling(tx, at.account);
+      return { accessToken: newAccountToken.accessToken };
     });
     return result;
+  }
+
+  async getRole(userSn: number): Promise<UserRole> {
+    const user = await this.prisma.user.findUnique({ where: { userSn } });
+    return user.role;
   }
 
   /**
    * jwt 생성
    */
-  genJwtToken(userSn: number, role: UserRole, jti: string, expiresIn: number) {
-    const payload = { sub: userSn, role, jti };
+  genJwtToken(userSn: number, jti: string, expiresIn: number) {
+    const payload = { sub: userSn, jti };
     const option: JwtSignOptions = { expiresIn };
     return this.jwtService.signAsync(payload, option);
   }
 
   genJti(): string {
     return uuidv4();
+  }
+
+  setAccessCookieToClient(response: Response, accessToken: string) {
+    const cookieName = this.configService.get('jwt.cookieName');
+    const thirtyDaysInMilliseconds = this.configService.get('jwt.cookieExp'); // 30일을 밀리초로 변환
+    const expirationDate = new Date(Date.now() + thirtyDaysInMilliseconds);
+    response.cookie(cookieName, accessToken, {
+      httpOnly: true,
+      path: '/',
+      expires: expirationDate,
+    });
+  }
+
+  private async accessTokenRolling(
+    psm: Prisma.TransactionClient,
+    account: Account,
+  ): Promise<AccountToken> {
+    const accessTokenJti = this.genJti();
+    const refreshTokenJti = this.genJti();
+
+    const accessTokenExpires = this.configService.get('jwt.accessTokenExp');
+    const refrshTokenExpires = this.configService.get('jwt.refreshTokenExp');
+
+    const newAccessToken = await this.genJwtToken(
+      account.userSn,
+      accessTokenJti,
+      accessTokenExpires,
+    );
+    const newRefreshToken = await this.genJwtToken(
+      account.userSn,
+      refreshTokenJti,
+      refrshTokenExpires,
+    );
+
+    const nowTimeNum = Date.now();
+
+    const accountToken = await psm.accountToken.create({
+      data: {
+        accountSn: account.accountSn,
+        accessExpires: new Date(nowTimeNum + accessTokenExpires),
+        refreshExpires: new Date(nowTimeNum + refrshTokenExpires),
+        accessJti: accessTokenJti,
+        refreshJti: refreshTokenJti,
+        accessToken: newAccessToken,
+        refreshToken: newRefreshToken,
+      },
+    });
+
+    return accountToken;
   }
 }
