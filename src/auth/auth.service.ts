@@ -48,7 +48,12 @@ export default class AuthService {
   }
 
   /**
-   * TODO: Trx, DupCheck
+   * TODO: errcode 정의
+   * (*1) 이메일과 프로바이더 유효성 체크
+   * (*2) user 생성
+   * (*3) 계정 생성
+   * (*4) access, refresh 토큰 생성
+   * (*5) access, refresh 토큰 서버 저장
    */
   async regist(
     email: string,
@@ -60,6 +65,7 @@ export default class AuthService {
     imageUrl: string,
   ): Promise<RegistReuslt> {
     const result = await this.prisma.$transaction(async (tx) => {
+      //(*1)
       const accountCount = await tx.account.count({
         where: { AND: [{ email }, { provider }] },
       });
@@ -67,6 +73,7 @@ export default class AuthService {
         throw new InternalServerErrorException();
       }
 
+      //(*2)
       const user = await tx.user.create({
         data: { name, nickName, imageUrl, role: UserRole.USER },
       });
@@ -80,11 +87,15 @@ export default class AuthService {
           providerId,
         },
       });
+      //(*3)
       const accessToken = await this.genAccessToken(user.userSn, user.role);
       const refreshToken = await this.genRefreshToken(user.userSn, user.role);
+
+      //(*4)
       await tx.accountRefreshToken.create({
         data: { token: refreshToken, accountSn: account.accountSn },
       });
+
       return {
         userSn: user.userSn,
         accessToken,
