@@ -19,6 +19,9 @@ export default class AuthService {
     private readonly configService: ConfigService,
   ) {}
 
+  /**
+   * 로그인
+   */
   async signIn(email: string, password: string) {
     const user = await this.prisma.account.findFirst({
       where: { email, password },
@@ -38,11 +41,15 @@ export default class AuthService {
     return { accessToken, refreshToken };
   }
 
+  /**
+   * 로그아웃
+   */
   signOut() {
     return 'singOut';
   }
 
   /**
+   * 회원가입
    * - (*1) 이메일과 프로바이더 유효성 체크
    * - (*2) user 생성
    * - (*3) 계정 생성
@@ -103,14 +110,22 @@ export default class AuthService {
     return result;
   }
 
+  /**
+   * 회원탈퇴
+   */
   withdraw() {}
 
+  /**
+   * 액세스토큰 생성
+   */
   genAccessToken(userSn: number, role: UserRole) {
     const payload = { sub: userSn, role: role };
     const option: JwtSignOptions = { expiresIn: '1d' };
     return this.jwtService.signAsync(payload, option);
   }
-
+  /**
+   * 리프레시토큰 생성
+   */
   genRefreshToken(userSn: number, role: UserRole) {
     const payload = { sub: userSn, role: role };
     const option: JwtSignOptions = { expiresIn: '30d' };
