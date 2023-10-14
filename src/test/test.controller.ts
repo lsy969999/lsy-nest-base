@@ -6,12 +6,14 @@ import {
   Post,
   UseGuards,
   Render,
+  Req,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { TestService } from './test.service';
 import { testParentCreateDto } from './dto/req.dto';
 import { ThrottlerBehindProxyGuard } from 'src/common/guard/throttler-behind-proxy.guard';
 import { SkipThrottle } from '@nestjs/throttler';
+import { Request } from 'express';
 
 @Controller('test')
 @ApiTags('test')
@@ -23,14 +25,14 @@ export class TestController {
   @Get('sse')
   @SkipThrottle()
   @Render('test/sse')
-  sseView(){
+  sseView() {
     return {};
   }
 
   @Get('ws')
   @SkipThrottle()
   @Render('test/ws')
-  wsView(){
+  wsView() {
     return {};
   }
 
@@ -48,7 +50,9 @@ export class TestController {
   }
 
   @Get()
-  async testGetParent() {
+  async testGetParent(@Req() request: Request) {
+    console.log(request);
+    console.log(request.cookies);
     return await this.testService.getTestParent();
   }
 

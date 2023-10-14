@@ -14,6 +14,7 @@ import * as basicAuth from 'express-basic-auth';
 import helmet from 'helmet';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
+import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   //Logger setting
@@ -117,6 +118,8 @@ async function bootstrap() {
       contentSecurityPolicy: cspOptions,
     }),
   );
+  //cookie
+  app.use(cookieParser());
   //hbs view
   app.useStaticAssets(join(__dirname, '..', 'public'));
   app.setBaseViewsDir(join(__dirname, '..', 'views'));

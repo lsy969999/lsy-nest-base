@@ -72,12 +72,13 @@ export class AuthController {
     };
   }
 
-  //탈퇴
+  //탈퇴 TODO
   @Post('withdraw')
   withdrawal(@Body() data: WithDrawReqDto) {
     return { json: 'hi', ...data };
   }
 
+  //재발급
   @Post('refresh')
   refresh(@Body() data: RefreshReqDto) {
     return this.authService.refresh(data.accessToken);

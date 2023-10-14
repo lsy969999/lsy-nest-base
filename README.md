@@ -58,4 +58,6 @@ npm i --save @nestjs/throttler
 npm i --save helmet
 npm install uuid
 npm install --save @types/uuid
+npm i cookie-parser
+npm i -D @types/cookie-parser
 ```
