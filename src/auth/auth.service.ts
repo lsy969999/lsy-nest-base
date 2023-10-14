@@ -8,12 +8,7 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService, JwtSignOptions } from '@nestjs/jwt';
 import { AccountProvider, AccountStatus, UserRole } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
-type RegistReuslt = {
-  userSn: number;
-  accessToken: string;
-  refreshToken: string;
-  nickName: string;
-};
+import { RegistReuslt } from './types/service.types';
 
 @Injectable()
 export default class AuthService {
@@ -48,12 +43,13 @@ export default class AuthService {
   }
 
   /**
-   * TODO: errcode 정의
-   * (*1) 이메일과 프로바이더 유효성 체크
-   * (*2) user 생성
-   * (*3) 계정 생성
-   * (*4) access, refresh 토큰 생성
-   * (*5) access, refresh 토큰 서버 저장
+   * - (*1) 이메일과 프로바이더 유효성 체크
+   * - (*2) user 생성
+   * - (*3) 계정 생성
+   * - (*4) access, refresh 토큰 생성
+   * - (*5) access, refresh 토큰 서버 저장
+   * ---
+   * @TODO errcode 정의
    */
   async regist(
     email: string,
