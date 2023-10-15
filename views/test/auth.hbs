@@ -59,6 +59,11 @@
     <h2>kakao</h2>
     <button id="kakao">kakao</button>
   </div>
+  <hr>
+  <div>
+    <h2>naver</h2>
+    <button id="naver">naver</button>
+  </div>
     <script>
       const headers = {"Content-Type": "application/json"}
       function signIn(event){
@@ -98,9 +103,14 @@
         
       }
 
-      function kakao(){
+      function kakao(event){
         event.preventDefault()
         location.href = '/api/auth/kakao'
+      }
+
+      function naver(event){
+         event.preventDefault()
+        location.href = '/api/auth/naver'
       }
       
       document.getElementById('withdraw').addEventListener('click', withdraw)
@@ -109,6 +119,7 @@
       document.getElementById('signIn').addEventListener('click', signIn)
       document.getElementById('google').addEventListener('click', google)
       document.getElementById('kakao').addEventListener('click', kakao)
+      document.getElementById('naver').addEventListener('click', naver)
     </script>
   </body>
 </html>

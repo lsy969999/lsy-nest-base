@@ -163,4 +163,20 @@ export class AuthController {
     console.log('kakaoCallback', JSON.stringify(user));
     res.redirect('http://localhost:4000/test/auth');
   }
+
+  @Get('naver')
+  @UseGuards(AuthGuard('naver'))
+  async naverLogin() {
+    return {
+      msg: 'naver',
+    };
+  }
+
+  @Get('naver/callback')
+  @UseGuards(AuthGuard('naver'))
+  async naverCallback(@Req() req, @Res() res: Response) {
+    const { user } = req;
+    console.log('naverCallback', JSON.stringify(user));
+    res.redirect('http://localhost:4000/test/auth');
+  }
 }

@@ -7,12 +7,19 @@ import { PrismaModule } from 'src/prisma/prisma.module';
 import { UserModule } from 'src/user/user.module';
 import { GoogleStrategy } from './strategy/google.strategy';
 import { KakaoStrategy } from './strategy/kakao.strategy';
+import { NaverStrategy } from './strategy/naver.strategy';
 
 @Global()
 @Module({
   imports: [PrismaModule, PassportModule, UserModule],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy, GoogleStrategy, KakaoStrategy],
+  providers: [
+    AuthService,
+    JwtStrategy,
+    GoogleStrategy,
+    KakaoStrategy,
+    NaverStrategy,
+  ],
   exports: [AuthService],
 })
 export class AuthModule {}
