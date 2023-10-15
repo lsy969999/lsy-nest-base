@@ -1,4 +1,12 @@
-import { Body, Controller, Logger, Post, Req, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Logger,
+  Post,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import AuthService from './auth.service';
 import {
@@ -11,6 +19,8 @@ import {
 import { RegistResDto, SignInResDto } from './dto/res.dto';
 import { Response } from 'express';
 import { ConfigService } from '@nestjs/config';
+import { JwtAuthGuard } from 'src/common/guard/jwt-auth.guard';
+import { AuthedUser, User } from 'src/common/decorator/user.decorator';
 /*
 사용자 인증에관한 진입점
 인증은 jwt를 사용하며,
@@ -92,12 +102,14 @@ export class AuthController {
 
   //탈퇴 TODO
   @Post('withdraw')
+  @UseGuards(JwtAuthGuard)
   async withdrawal(
     @Body() data: WithDrawReqDto,
+    @User() user: AuthedUser,
     @Res({ passthrough: true }) response: Response,
   ) {
+    await this.authService.withdraw(user.userSn);
     this.authService.clearAccessCookieToClient(response);
-    await this.authService.withdraw(1);
     return {};
   }
 
