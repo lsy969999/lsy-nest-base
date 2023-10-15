@@ -24,6 +24,8 @@ auth
 npm install bcrypt @types/bcrypt
 npm install @nestjs/jwt @nestjs/passport passport passport-jwt passport-local
 npm install --save-dev @types/passport-jwt @types/passport-local
+npm install --save passport-google-oauth20
+npm install -D @types/passport-google-oauth20
 ```
 
 health

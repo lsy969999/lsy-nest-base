@@ -49,7 +49,11 @@
       <button id="withdraw">withdraw</button>
     </div>
     <img src="/test.PNG" />
-
+<hr>
+  <div>
+    <h2>google</h2>
+    <button id="google">google</button>
+  </div>
     <script>
       const headers = {"Content-Type": "application/json"}
       function signIn(event){
@@ -82,11 +86,18 @@
           .then(console.log)
           .catch(console.error)
       }
+
+      function google(event){
+        event.preventDefault()
+        location.href = '/api/auth/google'
+        
+      }
       
       document.getElementById('withdraw').addEventListener('click', withdraw)
       document.getElementById('regist').addEventListener('click', regist)
       document.getElementById('signOut').addEventListener('click', signOut)
       document.getElementById('signIn').addEventListener('click', signIn)
+      document.getElementById('google').addEventListener('click', google)
     </script>
   </body>
 </html>

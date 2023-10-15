@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   Logger,
   Post,
   Req,
@@ -21,6 +22,7 @@ import { Response } from 'express';
 import { ConfigService } from '@nestjs/config';
 import { JwtAuthGuard } from 'src/common/guard/jwt-auth.guard';
 import { AuthedUser, User } from 'src/common/decorator/user.decorator';
+import { AuthGuard } from '@nestjs/passport';
 /*
 사용자 인증에관한 진입점
 인증은 jwt를 사용하며,
@@ -125,5 +127,40 @@ export class AuthController {
     const res = await this.authService.refresh(acc);
     this.authService.setAccessCookieToClient(response, res.accessToken);
     return {};
+  }
+
+  //
+  //
+  @Get('google')
+  @UseGuards(AuthGuard('google'))
+  async googleLogin() {
+    return {
+      msg: 'google',
+    };
+  }
+
+  @Get('google/callback')
+  @UseGuards(AuthGuard('google'))
+  async googleCallback(@Req() req, @Res() res: Response) {
+    // console.log(req)
+    const { user } = req;
+    console.log('googleCallback', JSON.stringify(user));
+    res.redirect('http://localhost:4000/test/auth');
+  }
+
+  @Get('kakao')
+  @UseGuards(AuthGuard('kakao'))
+  async kakaoLogin() {
+    return {
+      msg: 'kakao',
+    };
+  }
+
+  @Get('kakao')
+  @UseGuards(AuthGuard('kakao'))
+  async kakaoCallback(@Req() req, @Res() res: Response) {
+    const { user } = req;
+    console.log('kakaoCallback', JSON.stringify(user));
+    res.redirect('http://localhost:4000/test/auth');
   }
 }

@@ -16,12 +16,13 @@ import { WsGateWayModule } from './ws-gate-way/ws-gate-way.module';
 import { SseModule } from './sse/sse.module';
 import jwtConfig from './config/jwt.config';
 import { JwtModule } from '@nestjs/jwt';
+import authConfig from './config/auth.config';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [databaseConfig, jwtConfig],
+      load: [databaseConfig, jwtConfig, authConfig],
     }),
     CacheModule.register({
       isGlobal: true,

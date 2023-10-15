@@ -95,6 +95,7 @@ async function bootstrap() {
     unsafe-eval	: eval과 같은 텍스트 자바스크립트 메커니즘을 허용 
       */
   // 구글 API 도메인과 인라인 스크립트, eval 스크립트를 허용
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const cspOptions = {
     directives: {
       // 헬멧 기본 옵션 가져오기
@@ -105,19 +106,28 @@ async function bootstrap() {
         "'unsafe-inline'",
         "'unsafe-eval'",
         'https://cdn.socket.io',
+        // "'connect-src'",
+        'https://accounts.google.com',
       ],
       // 다음과 카카오에서 이미지 소스를 허용
       'img-src': ["'self'", 'data:', '*.daumcdn.net', '*.kakaocdn.net'],
       // 소스에 https와 http 허용
       //'base-uri': ['/', 'http:'],
+      'connect-src': ["'self'", 'https://accounts.google.com'],
     },
   };
   //helmet
   app.use(
     helmet({
-      contentSecurityPolicy: cspOptions,
+      contentSecurityPolicy: false, //TODO cspOptions
     }),
   );
+  app.enableCors({
+    origin: true,
+    // methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true,
+  });
+
   //cookie
   app.use(cookieParser());
   //hbs view
