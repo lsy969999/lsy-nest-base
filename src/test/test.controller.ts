@@ -19,6 +19,7 @@ import { JwtAuthGuard } from 'src/common/guard/jwt-auth.guard';
 import { Public } from 'src/common/decorator/public.decorator';
 import { Roles } from 'src/common/decorator/role.decorator';
 import { UserRole } from '@prisma/client';
+import { AuthedUser, User } from 'src/common/decorator/user.decorator';
 
 @Controller('test')
 @ApiTags('test')
@@ -66,8 +67,8 @@ export class TestController {
   @SkipThrottle()
   // @Public()
   // @Roles(UserRole.ADMIN)
-  test(@Req() request) {
-    console.log('zz', request.user);
+  test(@User() user: AuthedUser) {
+    console.log('zz', user);
     return 'hi';
   }
 

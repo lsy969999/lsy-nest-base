@@ -103,9 +103,15 @@ export class AuthController {
 
   //재발급
   @Post('refresh')
-  refresh(@Body() data: RefreshReqDto, @Req() request: any) {
-    console.log(request.user);
-    console.log(data);
-    // return this.authService.refresh(data.accessToken);
+  async refresh(
+    @Body() data: RefreshReqDto,
+    @Req() request: any,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    const cookieName = this.configService.get('jwt.cookieName');
+    const acc = request.cookies[cookieName];
+    const res = await this.authService.refresh(acc);
+    this.authService.setAccessCookieToClient(response, res.accessToken);
+    return {};
   }
 }
