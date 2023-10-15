@@ -43,8 +43,8 @@ export class RegistReqDto {
 }
 
 export class RefreshReqDto {
-  @ApiProperty({ required: true })
-  accessToken: string;
+  // @ApiProperty({ required: true })
+  // accessToken: string;
 }
 
 export class WithDrawReqDto {}

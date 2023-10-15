@@ -37,7 +37,7 @@ import { JwtModule } from '@nestjs/jwt';
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => {
         const obj = {
-          global: true,
+          // global: true,
           secret: configService.get('jwt.secret'),
         };
         return obj;

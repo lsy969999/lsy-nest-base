@@ -1,4 +1,4 @@
-import { Body, Controller, Logger, Post, Res } from '@nestjs/common';
+import { Body, Controller, Logger, Post, Req, Res } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import AuthService from './auth.service';
 import {
@@ -50,13 +50,13 @@ export class AuthController {
 
   //이메일 로그아웃
   @Post('signOut')
-  signOut(
+  async signOut(
     @Body() data: SignOutReqDto,
     @Res({ passthrough: true }) response: Response,
   ) {
-    response.clearCookie('at');
-    this.logger.debug(data);
-    return this.authService.signOut();
+    this.authService.clearAccessCookieToClient(response);
+    await this.authService.signOut(1);
+    return {};
   }
 
   //가입
@@ -92,17 +92,20 @@ export class AuthController {
 
   //탈퇴 TODO
   @Post('withdraw')
-  withdrawal(
+  async withdrawal(
     @Body() data: WithDrawReqDto,
     @Res({ passthrough: true }) response: Response,
   ) {
-    response.clearCookie('at');
-    return { json: 'hi', ...data };
+    this.authService.clearAccessCookieToClient(response);
+    await this.authService.withdraw(1);
+    return {};
   }
 
   //재발급
   @Post('refresh')
-  refresh(@Body() data: RefreshReqDto) {
-    return this.authService.refresh(data.accessToken);
+  refresh(@Body() data: RefreshReqDto, @Req() request: any) {
+    console.log(request.user);
+    console.log(data);
+    // return this.authService.refresh(data.accessToken);
   }
 }

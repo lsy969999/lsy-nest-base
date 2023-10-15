@@ -64,8 +64,11 @@ export default class AuthService {
   /**
    * 로그아웃
    */
-  signOut() {
-    return 'singOut';
+  async signOut(userSn: number) {
+    await this.prisma.accountToken.updateMany({
+      where: { account: { userSn } },
+      data: { isDeleted: true },
+    });
   }
 
   /**
@@ -131,7 +134,22 @@ export default class AuthService {
   /**
    * 회원탈퇴
    */
-  withdraw() {}
+  async withdraw(userSn: number) {
+    await this.prisma.$transaction(async (tx) => {
+      await tx.user.update({
+        where: { userSn },
+        data: { isDeleted: true },
+      });
+      await tx.account.updateMany({
+        where: { userSn },
+        data: { accountStatus: AccountStatus.WITHDRAW, isDeleted: true },
+      });
+      await tx.accountToken.updateMany({
+        where: { account: { userSn } },
+        data: { isDeleted: true },
+      });
+    });
+  }
 
   async refresh(accessToken: string): Promise<{ accessToken: string }> {
     const result = await this.prisma.$transaction(async (tx) => {
@@ -179,6 +197,11 @@ export default class AuthService {
 
   genJti(): string {
     return uuidv4();
+  }
+
+  clearAccessCookieToClient(response: Response) {
+    const cookieName = this.configService.get('jwt.cookieName');
+    response.clearCookie(cookieName);
   }
 
   setAccessCookieToClient(response: Response, accessToken: string) {

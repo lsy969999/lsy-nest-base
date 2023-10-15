@@ -63,9 +63,11 @@ export class TestController {
 
   @Get('t')
   @UseGuards(JwtAuthGuard)
+  @SkipThrottle()
   // @Public()
   // @Roles(UserRole.ADMIN)
-  test() {
+  test(@Req() request) {
+    console.log('zz', request.user);
     return 'hi';
   }
 

@@ -29,7 +29,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
   }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    this.logger.debug('authguard');
+    // this.logger.debug('authguard');
     const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
       context.getHandler(),
       context.getClass(),
@@ -41,7 +41,8 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     const http = context.switchToHttp();
     const request = http.getRequest<Request>();
     const response = http.getResponse<Response>();
-    const token = request.cookies['at'];
+    const cookieName = this.configService.get('jwt.cookieName');
+    const token = request.cookies[cookieName];
 
     if (!token) {
       const error = new UnauthorizedException();
@@ -52,13 +53,16 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     let payload;
     try {
       payload = await this.jwtService.verifyAsync(token, { secret });
-      this.logger.debug(payload);
+      // this.logger.debug('1', JSON.stringify(payload));
     } catch (error) {
       this.logger.warn(error.message + 'refresh start');
       try {
         const newToken = await this.authService.refresh(token);
         const decoded = this.jwtService.decode(newToken.accessToken);
         payload = decoded;
+        // this.logger.debug('2', JSON.stringify(payload));
+        const refreshedName = this.configService.get('jwt.refreshedName');
+        request.headers[refreshedName] = newToken.accessToken;
         this.authService.setAccessCookieToClient(
           response,
           newToken.accessToken,
@@ -80,7 +84,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
         return false;
       }
     }
-
-    return true;
+    const res = (await super.canActivate(context)) as boolean;
+    return res;
   }
 }

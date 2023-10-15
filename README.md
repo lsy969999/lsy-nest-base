@@ -23,6 +23,7 @@ auth
 ```
 npm install bcrypt @types/bcrypt
 npm install @nestjs/jwt @nestjs/passport passport passport-jwt passport-local
+npm install --save-dev @types/passport-jwt @types/passport-local
 ```
 
 health
