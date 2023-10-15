@@ -156,7 +156,7 @@ export class AuthController {
     };
   }
 
-  @Get('kakao')
+  @Get('kakao/callback')
   @UseGuards(AuthGuard('kakao'))
   async kakaoCallback(@Req() req, @Res() res: Response) {
     const { user } = req;
